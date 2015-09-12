@@ -5,8 +5,12 @@ let ParseFetcher = {
 	getAllCandidates: () => {
 		// Get candidates from Parse
 		return new Promise((resolve, reject) => {
+			// connect to parse
+			// resolve(candidates) retrieves the data from the store
+
 			setTimeout(() => {
-				let candidates = [{id:"a", "first_name": "Donald", "last_name": "Trump"}, {"id":"b", "first_name": "Hillary", "last_name": "Clinton"}]
+				let candidates = // return what exists in candidates store right now
+				// [{id:"a", "first_name": "Donald", "last_name": "Trump"}, {"id":"b", "first_name": "Hillary", "last_name": "Clinton"}]
 				resolve(candidates)
 			}, 2000)
 		})
