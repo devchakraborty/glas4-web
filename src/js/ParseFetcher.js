@@ -1,3 +1,4 @@
+Parse.initialize("iXDvlSh7XJjt7J5a0vB6kgWSljEjtIICxAWTQnrF", "twvM3T7jNdbEB2jlJUSk7iXKjb24xv0IOjpJYUtA");
 let _ = require('lodash')
 let ParseFetcher = {
 	getAllCandidates: () => {
