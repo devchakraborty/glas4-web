@@ -2,16 +2,20 @@ require('../scss/index.scss')
 
 import React from 'react'
 import ParseFetcher from './ParseFetcher'
+let _ = require('lodash')
+let $ = require('jquery')
 let Dispatcher = require('./AppDispatcher')
 let IssueStore = require('./stores/IssueStore')
 let CandidateStore = require('./stores/CandidateStore')
 let VideoStore = require('./stores/VideoStore')
 let StoreConstants = require('./stores/StoreConstants')
 
+const DEFAULT_LIMIT = 10
+
 class App extends React.Component {
 	constructor() {
 		super()
-		this.state = {issues:[], candidates:[]}
+		this.state = {issues:{}, candidates:{}, selectedIssues:{}, selectedCandidates:{}}
 	}
 	componentDidMount() {
 		IssueStore.on(StoreConstants.ISSUE_CREATE, () => {
@@ -21,6 +25,10 @@ class App extends React.Component {
 			this.setState({candidates: CandidateStore.getAll()})
 			console.log("CANDIDATES UPDATE", this.state.candidates)
 		})
+	}
+	componentDidUpdate() {
+		this.refs.videos.setState({videos:[]})
+		this.refs.videos.load(0, DEFAULT_LIMIT)
 	}
 	render() {
 		let issueElems = []
@@ -32,9 +40,23 @@ class App extends React.Component {
 		issues = issues.sort(function(a, b) {
 			return a.name > b.name ? 1 : -1
 		})
-		for (let issue of issues) {
-			issueElems.push(<Issue {...issue} key={issue.id} />)
-		}
+		
+		issues.forEach((issue) => {
+			let app = this
+			let changeFunc = () => {
+				let checked = $('#'+issue.id).is(':checked')
+				console.log(checked)
+				let old = _.clone(app.state.selectedIssues)
+				if (checked) {
+					old[issue.id] = issue
+					app.setState({selectedIssues:old})
+				} else {
+					delete old[issue.id]
+					app.setState({selectedIssues:old})
+				}
+			}
+			issueElems.push(<li class="checkbox"><input type="checkbox" onChange={changeFunc} id={issue.id} /> {issue.name}</li>)
+		})
 
 		let candidateElems = []
 		let candidates = []
@@ -47,59 +69,88 @@ class App extends React.Component {
 			return a.last_name > b.last_name ? 1 : -1
 		})
 
-		for (let candidate of candidates) {
-			candidateElems.push(<Candidate {...candidate} key={candidate.id} />)
-		}
+		candidates.forEach((candidate) => {
+			let app = this
+			let changeFunc = () => {
+				let checked = $('#'+candidate.id).is(':checked')
+				let old = _.clone(app.state.selectedCandidates)
+				if (checked) {
+					old[candidate.id] = candidate
+					app.setState({selectedCandidates:old})
+				} else {
+					delete old[candidate.id]
+					app.setState({selectedCandidates:old})
+				}
+			}
+			candidateElems.push(<li class="checkbox"><input type="checkbox" onChange={changeFunc} id={candidate.id} /> {candidate.name}</li>)
+		})
 
-		return <div id="app"><ul>{issueElems}</ul><ul>{candidateElems}</ul><Videos /></div>
+		return <div id="app"><ul>{issueElems}</ul><ul>{candidateElems}</ul><Videos app={this} ref="videos" /></div>
 	}
 }
 
 class Checkbox extends React.Component {
-	constructor(props) {
+	constructor() {
 		super()
 		this.state = {checked:false}
-		this.props = props
 	}
 	render() {
-		return <li class="checkbox"><input type="checkbox" id={this.props.id} onchange={this._change.bind(this)} /> {this.props.name}</li>
+		return <li class="checkbox"><input type="checkbox" id={this.props.object.id} onChange={this.handleChange} /> {this.props.object.name}</li>
 	}
-	_change() {
+	handleChange() {
+		console.log('change')
 		this.setState({checked:!this.state.checked})
-	}
-}
-
-class Issue extends Checkbox {
-	constructor(props) {
-		super()
-	}
-}
-
-class Candidate extends Checkbox {
-	constructor(props) {
-		super()
+		if (this.state.checked) {
+			let old = _.clone(this.props.app.state.issues)
+			old.push(this.props.object)
+			let newState = {}
+			newState[this.props.label] = old
+			this.props.app.setState(newState)
+		} else {
+			let old = _.clone(this.props.app.state.issues)
+			for (let i in old) {
+				let item = old[i]
+				if (item.id == this.props.object.id) {
+					old.splice(i, 1)
+					break
+				}
+			}
+			let newState = {}
+			newState[this.props.label] = old
+			this.props.app.setState(newState)
+		}
 	}
 }
 
 class Videos extends React.Component {
-	constructor() {
+	constructor(props) {
 		super()
-		this.state = {loading:true, videos:[]}
+		this.props = props
+		this.state = {loading:false, videos:[]}
 	}
 	componentDidMount() {
 		VideoStore.on(StoreConstants.VIDEOS_SYNC, () => {
+			console.log("VIDEOS JUST SYNCED", VideoStore.getAll())
 			this.setState({videos: VideoStore.getAll(), loading:false})
 		})
+		this.load(0, DEFAULT_LIMIT)
 	}
 	render() {
-		if (this.state.loading) {
-			return <div id="videos">Loading...</div>
-		}
 		let videoElems = []
 		for (let video of this.state.videos) {
-			videoElems.push(<Video {...video} />)
+			videoElems.push(<Video {...video} key={video.id} />)
 		}
-		return <div class="video">{videoElems}</div>
+		if (this.state.loading) {
+			videoElems.push(<li class="loading">Loading...</li>)
+		}
+		return <div id="videos">{videoElems}</div>
+	}
+	load(offset, limit) {
+		this.setState({loading:true})
+		console.log("ISSUES", this.props.app.state.issues)
+		ParseFetcher.getVideos(_.pluck(_.values(this.props.app.state.selectedIssues), 'id'), _.pluck(_.values(this.props.app.state.selectedCandidates), 'id'), offset, limit).then((videos) => {
+			Dispatcher.dispatch({type:StoreConstants.VIDEOS_SYNC, videos:videos, offset:offset})
+		})
 	}
 }
 
@@ -109,13 +160,13 @@ class Video extends React.Component {
 		this.state = {}
 	}
 	render() {
-		return <div class="issue-video">Issue Video</div>
+		return <li class="issue-video">Issue Video</li>
 	}
 }
 
 function init() {
 	React.render(<App />, document.body)
-	Promise.all([ParseFetcher.getAllCandidates(), ParseFetcher.getAllIssues(), ParseFetcher.getVideos([], [], 0, 10)]).then(function(results) {
+	Promise.all([ParseFetcher.getAllCandidates(), ParseFetcher.getAllIssues()]).then(function(results) {
 		let candidates = results[0], issues = results[1], videos = results[2]
 		for (let issue of issues) {
 			Dispatcher.dispatch({type: StoreConstants.ISSUE_CREATE, issue:issue})
@@ -123,7 +174,6 @@ function init() {
 		for (let candidate of candidates) {
 			Dispatcher.dispatch({type: StoreConstants.CANDIDATE_CREATE, candidate:candidate})
 		}
-		Dispatcher.dispatch({type: StoreConstants.VIDEOS_SYNC, videos:videos, offset:0})
 	})
 }
 

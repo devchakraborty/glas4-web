@@ -6,6 +6,9 @@ let StoreConstants = require('./StoreConstants')
 let Dispatcher = require('../AppDispatcher')
 
 function create(videos, offset) {
+	if (_videos.length > videos.length + offset) {
+		_videos = _videos.slice(0, videos.length + offset)
+	}
 	for (let i = 0; i < videos.length; i++) {
 		let video = videos[i]
 		_videos[i + offset] = video
