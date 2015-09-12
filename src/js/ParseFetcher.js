@@ -21,8 +21,8 @@ let ParseFetcher = {
 			}, 2000)
 		})
 	},
-	getVideos: (issueID, candidateIDs, offset, limit) => {
-		// issueID: string, issue id to filter videos by
+	getVideos: (issueIDs, candidateIDs, offset, limit) => {
+		// issueID: array, issue ids to filter videos by, don't filter if empty array
 		// candidateIDs: array, candidate ids to filter videos by, don't filter if empty array
 		// offset: int, skip the first offset # of elements
 		// limit: int, only return limit # of elements

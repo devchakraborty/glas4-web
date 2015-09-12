@@ -5,6 +5,5 @@ module.exports = mirror({
 	CANDIDATE_DESTROY: null,
 	ISSUE_CREATE: null,
 	ISSUE_DESTROY: null,
-	VIDEO_CREATE: null,
-	VIDEO_DESTROY: null
+	VIDEOS_SYNC: null
 })

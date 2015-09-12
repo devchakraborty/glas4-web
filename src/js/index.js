@@ -1,27 +1,26 @@
 require('../scss/index.scss')
 
-import { Router, Route, IndexRoute, Link } from 'react-router'
 import React from 'react'
 import ParseFetcher from './ParseFetcher'
 let Dispatcher = require('./AppDispatcher')
 let IssueStore = require('./stores/IssueStore')
 let CandidateStore = require('./stores/CandidateStore')
+let VideoStore = require('./stores/VideoStore')
 let StoreConstants = require('./stores/StoreConstants')
 
-class Issues extends React.Component {
+class App extends React.Component {
 	constructor() {
 		super()
-		this.state = {issues:[]}
+		this.state = {issues:[], candidates:[]}
 	}
 	componentDidMount() {
 		IssueStore.on(StoreConstants.ISSUE_CREATE, () => {
 			this.setState({issues: IssueStore.getAll()})
 		})
-	}
-	componentDidUpdate() {
-		IssueStore.on(StoreConstants.ISSUE_CREATE, () => {
-			this.setState({issues: IssueStore.getAll()})
-		})	
+		CandidateStore.on(StoreConstants.CANDIDATE_CREATE, () => {
+			this.setState({candidates: CandidateStore.getAll()})
+			console.log("CANDIDATES UPDATE", this.state.candidates)
+		})
 	}
 	render() {
 		let issueElems = []
@@ -34,13 +33,77 @@ class Issues extends React.Component {
 			return a.name > b.name ? 1 : -1
 		})
 		for (let issue of issues) {
-			issueElems.push(<IssueLink {...issue} key={issue.id} />)
+			issueElems.push(<Issue {...issue} key={issue.id} />)
 		}
-		return <div id="app"><ul>{issueElems}</ul>{this.props.children}</div>
+
+		let candidateElems = []
+		let candidates = []
+
+		for (let id in this.state.candidates) {
+			candidates.push(this.state.candidates[id])
+		}
+
+		candidates = candidates.sort(function(a, b) {
+			return a.last_name > b.last_name ? 1 : -1
+		})
+
+		for (let candidate of candidates) {
+			candidateElems.push(<Candidate {...candidate} key={candidate.id} />)
+		}
+
+		return <div id="app"><ul>{issueElems}</ul><ul>{candidateElems}</ul><Videos /></div>
 	}
 }
 
-class IssueVideo extends React.Component {
+class Checkbox extends React.Component {
+	constructor(props) {
+		super()
+		this.state = {checked:false}
+		this.props = props
+	}
+	render() {
+		return <li class="checkbox"><input type="checkbox" id={this.props.id} onchange={this._change.bind(this)} /> {this.props.name}</li>
+	}
+	_change() {
+		this.setState({checked:!this.state.checked})
+	}
+}
+
+class Issue extends Checkbox {
+	constructor(props) {
+		super()
+	}
+}
+
+class Candidate extends Checkbox {
+	constructor(props) {
+		super()
+	}
+}
+
+class Videos extends React.Component {
+	constructor() {
+		super()
+		this.state = {loading:true, videos:[]}
+	}
+	componentDidMount() {
+		VideoStore.on(StoreConstants.VIDEOS_SYNC, () => {
+			this.setState({videos: VideoStore.getAll(), loading:false})
+		})
+	}
+	render() {
+		if (this.state.loading) {
+			return <div id="videos">Loading...</div>
+		}
+		let videoElems = []
+		for (let video of this.state.videos) {
+			videoElems.push(<Video {...video} />)
+		}
+		return <div class="video">{videoElems}</div>
+	}
+}
+
+class Video extends React.Component {
 	constructor() {
 		super()
 		this.state = {}
@@ -50,54 +113,17 @@ class IssueVideo extends React.Component {
 	}
 }
 
-class IssueLink extends React.Component {
-	constructor(props) {
-		super()
-		this.state = {}
-		this.props = props
-	}
-	render() {
-		return <li><Link to={`/issue/${this.props.id}`}>{this.props.name}</Link></li>
-	}
-}
-
-class Issue extends React.Component {
-	constructor() {
-		super()
-		this.state = {}
-	}
-	componentDidMount() {
-		this.setState(IssueStore.get(this.props.params.issueId))
-		console.log("MOUNT ISSUE", this.state)
-		IssueStore.on(StoreConstants.ISSUE_CREATE, () => {
-			this.setState(IssueStore.get(this.props.params.issueId))
-		})
-	}
-	componentWillReceiveProps(nextProps) {
-		console.log('RECEIVED PROPS')
-		this.setState(IssueStore.get(nextProps.params.issueId))
-	}
-	render() {
-		return <div class="issue">{this.state.name}</div>
-	}
-}
-
 function init() {
-	React.render((
-		<Router>
-			<Route path="/" component={Issues}>
-				<Route path="issue/:issueId" component={Issue} />
-			</Route>
-		</Router>
-	), document.body)
-	Promise.all([ParseFetcher.getAllCandidates(), ParseFetcher.getAllIssues()]).then(function(results) {
-		let candidates = results[0], issues = results[1]
+	React.render(<App />, document.body)
+	Promise.all([ParseFetcher.getAllCandidates(), ParseFetcher.getAllIssues(), ParseFetcher.getVideos([], [], 0, 10)]).then(function(results) {
+		let candidates = results[0], issues = results[1], videos = results[2]
 		for (let issue of issues) {
 			Dispatcher.dispatch({type: StoreConstants.ISSUE_CREATE, issue:issue})
 		}
 		for (let candidate of candidates) {
 			Dispatcher.dispatch({type: StoreConstants.CANDIDATE_CREATE, candidate:candidate})
 		}
+		Dispatcher.dispatch({type: StoreConstants.VIDEOS_SYNC, videos:videos, offset:0})
 	})
 }
 
