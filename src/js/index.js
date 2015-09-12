@@ -18,6 +18,11 @@ class Issues extends React.Component {
 			this.setState({issues: IssueStore.getAll()})
 		})
 	}
+	componentDidUpdate() {
+		IssueStore.on(StoreConstants.ISSUE_CREATE, () => {
+			this.setState({issues: IssueStore.getAll()})
+		})	
+	}
 	render() {
 		let issueElems = []
 		let issues = []
@@ -52,7 +57,7 @@ class IssueLink extends React.Component {
 		this.props = props
 	}
 	render() {
-		return <li><Link to={"/issue/"+this.props.id}>{this.props.name}</Link></li>
+		return <li><Link to={`/issue/${this.props.id}`}>{this.props.name}</Link></li>
 	}
 }
 
@@ -67,6 +72,10 @@ class Issue extends React.Component {
 		IssueStore.on(StoreConstants.ISSUE_CREATE, () => {
 			this.setState(IssueStore.get(this.props.params.issueId))
 		})
+	}
+	componentWillReceiveProps(nextProps) {
+		console.log('RECEIVED PROPS')
+		this.setState(IssueStore.get(nextProps.params.issueId))
 	}
 	render() {
 		return <div class="issue">{this.state.name}</div>
