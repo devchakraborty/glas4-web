@@ -1,6 +1,3 @@
-let candidateStore = require('./stores/CandidateStore')
-let issueStore = require('./stores/IssueStore')
-
 let ParseFetcher = {
 	getAllCandidates: () => {
 		// Get candidates from Parse
