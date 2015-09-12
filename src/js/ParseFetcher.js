@@ -3,10 +3,18 @@ let ParseFetcher = {
 	getAllCandidates: () => {
 		// Get candidates from Parse
 		return new Promise((resolve, reject) => {
-			setTimeout(() => {
-				let candidates = [{id:"a", "first_name": "Donald", "last_name": "Trump"}, {"id":"b", "first_name": "Hillary", "last_name": "Clinton"}]
-				resolve(candidates)
-			}, 200)
+			var query = new Parse.Query('Candidates');
+			query.limit = 10; 
+
+			query.find().then(function(results) { 
+				let candidates = results; 
+				console.log("CANDIDATES HERE", candidates)
+				// resolve(candidates)
+				// alert("got candidates");
+				resolve(results)
+			}, function(error) { 
+				reject(error)
+			}); 
 		})
 	},
 	getAllIssues: () => {
