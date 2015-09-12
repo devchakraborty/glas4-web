@@ -1,11 +1,11 @@
 Parse.initialize("iXDvlSh7XJjt7J5a0vB6kgWSljEjtIICxAWTQnrF", "twvM3T7jNdbEB2jlJUSk7iXKjb24xv0IOjpJYUtA");
-alert("hello");
+// alert("hello");
 
-var TestObject = Parse.Object.extend("TestObject");
-var testObject = new TestObject();
-testObject.save({foo: "bar"}).then(function(object) {
-  alert("yay! it worked");
-});
+// var TestObject = Parse.Object.extend("TestObject");
+// var testObject = new TestObject();
+// testObject.save({foo: "bar"}).then(function(object) {
+//   alert("yay! it worked");
+// });
 
 let ParseFetcher = {
 	getAllCandidates: () => {
@@ -15,12 +15,13 @@ let ParseFetcher = {
 			query.limit = 10; 
 
 			query.find().then(function(results) { 
-				let candidates = query; 
+				let candidates = results; 
+				console.log("CANDIDATES HERE", candidates)
 				// resolve(candidates)
-				alert("got candidates");
+				// alert("got candidates");
 				resolve(results)
 			}, function(error) { 
-				alert("didn't get candidates");
+				reject(error)
 			}); 
 		})
 	},
