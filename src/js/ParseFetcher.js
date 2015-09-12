@@ -20,7 +20,11 @@ let ParseFetcher = {
 			}, 2000)
 		})
 	},
-	getVideos: (issueID, candidateID, offset, limit) => {
+	getVideos: (issueID, candidateIDs, offset, limit) => {
+		// issueID: string, issue id to filter videos by
+		// candidateIDs: array, candidate ids to filter videos by, don't filter if empty array
+		// offset: int, skip the first offset # of elements
+		// limit: int, only return limit # of elements
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
 				let videos = [{"id": "e", "issue_id":"c", "candidate_id":"a"}]
