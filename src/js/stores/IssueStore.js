@@ -22,11 +22,9 @@ let IssueStore = assign({}, EventEmitter.prototype, {
 		return _issues[id]
 	},
 	dispatcherIndex: Dispatcher.register((action) => {
-		console.log("ACTION", action)
 		switch (action.type) {
 			case StoreConstants.ISSUE_CREATE:
 				create(action.issue)
-				console.log("ISSUES PRIVATE", _issues)
 				IssueStore.emit(StoreConstants.ISSUE_CREATE)
 				break
 			case StoreConstants.ISSUE_DESTROY:
