@@ -9,8 +9,9 @@ let IssueStore = require('./stores/IssueStore')
 let CandidateStore = require('./stores/CandidateStore')
 let VideoStore = require('./stores/VideoStore')
 let StoreConstants = require('./stores/StoreConstants')
+let URL = require('url-parse')
 
-const DEFAULT_LIMIT = 10
+const DEFAULT_LIMIT = 100
 
 class App extends React.Component {
 	constructor() {
@@ -44,7 +45,8 @@ class App extends React.Component {
 		issues.forEach((issue) => {
 			let app = this
 			let changeFunc = () => {
-				let checked = $('#'+issue.id).is(':checked')
+				$("#"+issue.id).toggleClass("active");
+				let checked = $('#'+issue.id).hasClass('active');
 				console.log(checked)
 				let old = _.clone(app.state.selectedIssues)
 				if (checked) {
@@ -55,7 +57,7 @@ class App extends React.Component {
 					app.setState({selectedIssues:old})
 				}
 			}
-			issueElems.push(<li className="checkbox"><input type="checkbox" onChange={changeFunc} id={issue.id} /> {issue.name}</li>)
+			issueElems.push(<li className="checkbox" id={issue.id} onClick={changeFunc}>{issue.name}</li>)
 		})
 
 		let candidateElems = []
@@ -72,7 +74,8 @@ class App extends React.Component {
 		candidates.forEach((candidate) => {
 			let app = this
 			let changeFunc = () => {
-				let checked = $('#'+candidate.id).is(':checked')
+				$("#"+candidate.id).toggleClass("active")
+				let checked = $('#'+candidate.id).hasClass('active')
 				let old = _.clone(app.state.selectedCandidates)
 				if (checked) {
 					old[candidate.id] = candidate
@@ -82,10 +85,10 @@ class App extends React.Component {
 					app.setState({selectedCandidates:old})
 				}
 			}
-			candidateElems.push(<li className="checkbox"><input type="checkbox" onChange={changeFunc} id={candidate.id} /> <label for={candidate.id}>{candidate.name}</label></li>)
+			candidateElems.push(<li className="checkbox" id={candidate.id} onClick={changeFunc}>{candidate.name}</li>)
 		})
 
-		return <div id="app-wrapper"><div id="header"><h1 id="title">glas4</h1><ul>{issueElems}</ul><ul>{candidateElems}</ul></div><Videos app={this} ref="videos" /></div>
+		return <div id="app"><div id="header"><h1 id="title">glas4</h1><div className="relative"><ul className="toggles">{issueElems}</ul></div><div className="relative"><ul className="toggles">{candidateElems}</ul></div></div><Videos app={this} ref="videos" /></div>
 	}
 }
 
@@ -93,7 +96,7 @@ class Videos extends React.Component {
 	constructor(props) {
 		super()
 		this.props = props
-		this.state = {loading:false, videos:[]}
+		this.state = {loading:false, videos:[], noMore:false}
 	}
 	componentDidMount() {
 		VideoStore.on(StoreConstants.VIDEOS_SYNC, () => {
@@ -109,12 +112,16 @@ class Videos extends React.Component {
 		}
 		if (this.state.loading) {
 			videoElems.push(<li class="loading">Loading...</li>)
-		}
+		}/* else if (this.state.noMore) {
+			videoElems.push(<li class="nomore">No more items.</li>)
+		} else {
+			videoElems.push(<li class="viewmore" onClick={this.viewMore}>View more</li>)
+		}*/
 		return <div id="videos">{videoElems}</div>
 	}
 	load(offset, limit) {
 		this.setState({loading:true})
-		console.log("ISSUES", this.props.app.state.issues)
+		// console.log("ISSUES", this.props.app.state.issues)
 		ParseFetcher.getVideos(_.pluck(_.values(this.props.app.state.selectedIssues), 'id'), _.pluck(_.values(this.props.app.state.selectedCandidates), 'id'), offset, limit).then((videos) => {
 			Dispatcher.dispatch({type:StoreConstants.VIDEOS_SYNC, videos:videos, offset:offset})
 		})
@@ -127,12 +134,52 @@ class Video extends React.Component {
 		this.state = {}
 	}
 	render() {
-		return <li class="issue-video">Issue Video</li>
+		// console.log("VIDEO URL", this.props.video_url)
+		let url = new URL(this.props.video_url, true)
+		let videoID = url.query.v
+		let start = url.query.start
+		let end = url.query.end
+
+		let embedUrl = new URL('http://google.com')
+		embedUrl.set('protocol', 'https:')
+		embedUrl.set('hostname', 'www.youtube.com')
+		embedUrl.set('pathname', '/embed/'+videoID)
+		let embedQuery = {}
+		if (start != null) {
+			embedQuery.start = start
+		}
+		if (end != null) {
+			embedQuery.end = end
+		}
+		embedUrl.set('query', embedQuery)
+
+		return (<li className="video">
+			<iframe src={embedUrl.href} className="youtube"></iframe>
+			<CandidateTag candidateID={this.props.candidate_id} />
+		</li>)
+	}
+}
+
+class CandidateTag extends React.Component {
+	constructor(props) {
+		super()
+		this.props = props
+		this.state = CandidateStore.get(this.props.candidateID) || {}
+	}
+	componentDidMount() {
+		CandidateStore.on(StoreConstants.CANDIDATE_CREATE, () => {
+			this.setState(CandidateStore.get(this.props.candidateID))
+		})
+	}
+	render() {
+		return (
+			<span class="candidate-tag {this.state.party}">{this.state.name}</span>
+		)
 	}
 }
 
 function init() {
-	React.render(<App />, $("#app").get(0))
+	React.render(<App />, document.body)
 	Promise.all([ParseFetcher.getAllCandidates(), ParseFetcher.getAllIssues()]).then(function(results) {
 		let candidates = results[0], issues = results[1], videos = results[2]
 		for (let issue of issues) {

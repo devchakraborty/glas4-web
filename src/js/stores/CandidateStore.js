@@ -15,6 +15,9 @@ function destroy(id) {
 }
 
 let CandidateStore = assign({}, EventEmitter.prototype, {
+	get: function(id) {
+		return _candidates[id]
+	},
 	getAll: function() {
 		return _candidates
 	},

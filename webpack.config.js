@@ -19,7 +19,7 @@ module.exports = {
 				test: /\.html$/, loader: 'file?name=[name].[ext]'
 			},
 			{
-				test: /\.(png|jpg)$/, loader: 'file?name=[hash].[ext]'
+				test: /\.(png|jpg)$/, loader: 'url?limit=8192'
 			},
 			{
 				test: /\.js$/, exclude: [/node_modules/], loader: 'source-map!react-hot!babel'
