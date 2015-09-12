@@ -26,21 +26,21 @@ class App extends React.Component {
 		let issueElems = []
 		let issues = []
 
-		for (let id in this.state.issues) {
-			issues.push(this.state.issues[id])
+		for (let objectId in this.state.issues) {
+			issues.push(this.state.issues[objectId])
 		}
 		issues = issues.sort(function(a, b) {
 			return a.name > b.name ? 1 : -1
 		})
 		for (let issue of issues) {
-			issueElems.push(<Issue {...issue} key={issue.id} />)
+			issueElems.push(<Issue {...issue} key={issue.objectId} />)
 		}
 
 		let candidateElems = []
 		let candidates = []
 
-		for (let id in this.state.candidates) {
-			candidates.push(this.state.candidates[id])
+		for (let objectId in this.state.candidates) {
+			candidates.push(this.state.candidates[objectId])
 		}
 
 		candidates = candidates.sort(function(a, b) {
@@ -48,7 +48,7 @@ class App extends React.Component {
 		})
 
 		for (let candidate of candidates) {
-			candidateElems.push(<Candidate {...candidate} key={candidate.id} />)
+			candidateElems.push(<Candidate {...candidate} key={candidate.objectId} />)
 		}
 
 		return <div id="app"><ul>{issueElems}</ul><ul>{candidateElems}</ul><Videos /></div>

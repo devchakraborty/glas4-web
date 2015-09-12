@@ -1,15 +1,27 @@
+Parse.initialize("iXDvlSh7XJjt7J5a0vB6kgWSljEjtIICxAWTQnrF", "twvM3T7jNdbEB2jlJUSk7iXKjb24xv0IOjpJYUtA");
+alert("hello");
+
+var TestObject = Parse.Object.extend("TestObject");
+var testObject = new TestObject();
+testObject.save({foo: "bar"}).then(function(object) {
+  alert("yay! it worked");
+});
+
 let ParseFetcher = {
 	getAllCandidates: () => {
 		// Get candidates from Parse
 		return new Promise((resolve, reject) => {
-			// connect to parse
-			// resolve(candidates) retrieves the data from the store
+			var query = new Parse.Query('Candidates');
+			query.limit = 10; 
 
-			setTimeout(() => {
-				let candidates = // return what exists in candidates store right now
-				// [{id:"a", "first_name": "Donald", "last_name": "Trump"}, {"id":"b", "first_name": "Hillary", "last_name": "Clinton"}]
-				resolve(candidates)
-			}, 2000)
+			query.find().then(function(results) { 
+				let candidates = query; 
+				// resolve(candidates)
+				alert("got candidates");
+				resolve(results)
+			}, function(error) { 
+				alert("didn't get candidates");
+			}); 
 		})
 	},
 	getAllIssues: () => {
