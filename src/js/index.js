@@ -55,7 +55,7 @@ class App extends React.Component {
 					app.setState({selectedIssues:old})
 				}
 			}
-			issueElems.push(<li class="checkbox"><input type="checkbox" onChange={changeFunc} id={issue.id} /> {issue.name}</li>)
+			issueElems.push(<li className="checkbox"><input type="checkbox" onChange={changeFunc} id={issue.id} /> {issue.name}</li>)
 		})
 
 		let candidateElems = []
@@ -82,43 +82,10 @@ class App extends React.Component {
 					app.setState({selectedCandidates:old})
 				}
 			}
-			candidateElems.push(<li class="checkbox"><input type="checkbox" onChange={changeFunc} id={candidate.id} /> {candidate.name}</li>)
+			candidateElems.push(<li className="checkbox"><input type="checkbox" onChange={changeFunc} id={candidate.id} /> <label for={candidate.id}>{candidate.name}</label></li>)
 		})
 
-		return <div id="app"><ul>{issueElems}</ul><ul>{candidateElems}</ul><Videos app={this} ref="videos" /></div>
-	}
-}
-
-class Checkbox extends React.Component {
-	constructor() {
-		super()
-		this.state = {checked:false}
-	}
-	render() {
-		return <li class="checkbox"><input type="checkbox" id={this.props.object.id} onChange={this.handleChange} /> {this.props.object.name}</li>
-	}
-	handleChange() {
-		console.log('change')
-		this.setState({checked:!this.state.checked})
-		if (this.state.checked) {
-			let old = _.clone(this.props.app.state.issues)
-			old.push(this.props.object)
-			let newState = {}
-			newState[this.props.label] = old
-			this.props.app.setState(newState)
-		} else {
-			let old = _.clone(this.props.app.state.issues)
-			for (let i in old) {
-				let item = old[i]
-				if (item.id == this.props.object.id) {
-					old.splice(i, 1)
-					break
-				}
-			}
-			let newState = {}
-			newState[this.props.label] = old
-			this.props.app.setState(newState)
-		}
+		return <div id="app-wrapper"><div id="header"><h1 id="title">glas4</h1><ul>{issueElems}</ul><ul>{candidateElems}</ul></div><Videos app={this} ref="videos" /></div>
 	}
 }
 
@@ -165,7 +132,7 @@ class Video extends React.Component {
 }
 
 function init() {
-	React.render(<App />, document.body)
+	React.render(<App />, $("#app").get(0))
 	Promise.all([ParseFetcher.getAllCandidates(), ParseFetcher.getAllIssues()]).then(function(results) {
 		let candidates = results[0], issues = results[1], videos = results[2]
 		for (let issue of issues) {
