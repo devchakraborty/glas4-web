@@ -11,10 +11,9 @@ class Video extends React.Component {
 		this.state = {}
 	}
 	render() {
-		let url = new URL(this.props.video_url, true)
-		let videoID = url.query.v
-		let start = url.query.start
-		let end = url.query.end
+		let videoID = this.props.videoID
+		let start = this.props.startTime
+		let end = this.props.endTime
 
 		let embedUrl = new URL('http://google.com')
 		embedUrl.set('protocol', 'https:')
