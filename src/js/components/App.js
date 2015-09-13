@@ -17,11 +17,11 @@ class App extends React.Component {
 		let issueUpdate = () => {
 			this.setState({issues: IssueStore.getAll()})
 		}
-		IssueStore.on(StoreConstants.ISSUE_CREATE, _.debounce(issueUpdate, 50))
+		IssueStore.on(StoreConstants.ISSUE_CREATE, _.debounce(issueUpdate.bind(this), 50))
 		let candidateUpdate = () => {
 			this.setState({candidates: CandidateStore.getAll()})
 		}
-		CandidateStore.on(StoreConstants.CANDIDATE_CREATE, _.debounce(candidateUpdate, 50))
+		CandidateStore.on(StoreConstants.CANDIDATE_CREATE, _.debounce(candidateUpdate.bind(this), 50))
 	}
 	componentDidUpdate() {
 		this.refs.videos.loadPage(0)
