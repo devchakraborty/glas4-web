@@ -6,8 +6,7 @@ let StoreConstants = require('./StoreConstants')
 let Dispatcher = require('../AppDispatcher')
 
 function create(videos) {
-	if (videos.length > 0)
-		_videos = videos
+	_videos = videos
 }
 
 let VideoStore = assign({}, EventEmitter.prototype, {

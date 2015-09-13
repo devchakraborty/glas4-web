@@ -11,6 +11,7 @@ class Video extends React.Component {
 		this.state = {}
 	}
 	render() {
+		let id = this.props.id
 		let videoID = this.props.videoID
 		let start = parseInt(this.props.startTime)
 		let end = parseInt(this.props.endTime)
@@ -29,13 +30,13 @@ class Video extends React.Component {
 		embedUrl.set('query', embedQuery)
 
 		let replaceImage = () => {
-			$("#img-"+videoID).replaceWith("<iframe src='" + embedUrl + "' class='youtube'></iframe>")
+			$("#img-"+id).replaceWith("<iframe src='" + embedUrl + "' class='youtube'></iframe>")
 		}
 
 		let video = this
 
 		return (<li className="video">
-			<img id={"img-"+videoID} className="video-thumb" src={require('../../img/play.png')} style={{backgroundImage: "url('//i.ytimg.com/vi/"+videoID+"/hqdefault.jpg')"}} onClick={replaceImage} />
+			<img id={"img-"+id} className="video-thumb" src={require('../../img/play.png')} style={{backgroundImage: "url('//i.ytimg.com/vi/"+videoID+"/hqdefault.jpg')"}} onClick={replaceImage} />
 			<div className="video-tags">
 				<IssueTag issueID={this.props.issue_id} video={video} />
 				<CandidateTag candidateID={this.props.candidate_id} video={video} />

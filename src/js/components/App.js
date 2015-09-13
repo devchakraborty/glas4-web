@@ -40,15 +40,13 @@ class App extends React.Component {
 		issues.forEach((issue) => {
 			let app = this
 			let changeFunc = () => {
-				$("#"+issue.id).toggleClass("active");
-				let checked = $('#'+issue.id).hasClass('active');
-				let old = _.clone(app.state.selectedIssues)
+				let checked = !$('#'+issue.id).hasClass('active')
+				$(".checkbox.issue").removeClass("active")
 				if (checked) {
-					old[issue.id] = issue
-					app.setState({selectedIssues:old})
+					$('#'+issue.id).addClass('active')
+					app.setState({selectedIssues:[issue]})
 				} else {
-					delete old[issue.id]
-					app.setState({selectedIssues:old})
+					app.setState({selectedIssues:[]})
 				}
 			}
 			issueElems.push(<li className="checkbox issue" id={issue.id} onClick={changeFunc} key={issue.id}>{issue.issueName}</li>)
