@@ -35,4 +35,6 @@ let IssueStore = assign({}, EventEmitter.prototype, {
 	})
 })
 
+IssueStore.setMaxListeners(1000)
+
 module.exports = IssueStore

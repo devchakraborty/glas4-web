@@ -15,10 +15,14 @@ class CandidateTag extends React.Component {
 		})
 	}
 	render() {
-		console.log('TAG RENDER')
-		return (
-			<span className="candidate-tag {this.state.party}">{this.state.name}</span>
-		)
+		if (this.state.first_name) {
+			let party = this.state.party.toLowerCase()
+			return (
+				<span className={"candidate-tag "+party}>{this.state.first_name+" "+this.state.last_name}</span>
+			)
+		}
+		else
+			return <span></span>
 	}
 }
 

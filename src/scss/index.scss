@@ -13,6 +13,8 @@ $video-height: 400px;
 $gap-below-video: 50px;
 $video-padding: 5px;
 
+$video-tags-height: 30px;
+
 // Main
 
 html, body {
@@ -101,7 +103,7 @@ ul.toggles {
 
 .video {
 	width: $column-width - 2 * $video-padding;
-	height: $video-height - 2 * $video-padding;
+	height: $video-height - 2 * $video-padding + $video-tags-height;
 	background: #f4f4f4;
 	display: block;
 	margin-bottom: $gap-below-video;
@@ -157,4 +159,42 @@ ul, li {
 
 .hidden, #prev.hidden, #next.hidden {
 	display: none;
+}
+
+.video-tags {
+	height: $video-tags-height;
+
+	.issue-tag, .candidate-tag {
+		text-transform: uppercase;
+		font-size: 10px;
+		padding: 4px;
+		margin: $video-padding $video-padding 0 0;
+		display: inline-block;
+	}
+
+	.candidate-tag {
+		&.republicans {
+			background: #a22f2f;
+			color: #ffffff;
+		}
+		&.democrats {
+			background: #2e6fc1;
+			color: #ffffff;
+		}
+	}
+
+	.issue-tag {
+		&.orange {
+			background: #ffc25d;
+			color: #714e14;
+		}
+		&.yellow {
+			background: #feef7a;
+			color: #6b621c;
+		}
+		&.green {
+			background: #b3ef70;
+			color: #4c7222;
+		}
+	}
 }

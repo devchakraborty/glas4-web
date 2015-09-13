@@ -1,9 +1,9 @@
 let React = require('react')
 let $ = require('jquery')
 
+let StoreConstants = require('../stores/StoreConstants')
 let IssueStore = require('../stores/IssueStore')
 let CandidateStore = require('../stores/CandidateStore')
-let StoreConstants = require('../stores/StoreConstants')
 
 let Videos = require('./Videos')
 
@@ -13,6 +13,7 @@ class App extends React.Component {
 		this.state = {issues:{}, candidates:{}, selectedIssues:{}, selectedCandidates:{}}
 	}
 	componentDidMount() {
+		console.log('mount')
 		let issueUpdate = () => {
 			this.setState({issues: IssueStore.getAll()})
 		}
@@ -36,8 +37,8 @@ class App extends React.Component {
 		issues.forEach((issue) => {
 			let app = this
 			let changeFunc = () => {
-				$("#"+issue.id).toggleClass("active")
-				let checked = $('#'+issue.id).hasClass('active')
+				$("#"+issue.id).toggleClass("active");
+				let checked = $('#'+issue.id).hasClass('active');
 				let old = _.clone(app.state.selectedIssues)
 				if (checked) {
 					old[issue.id] = issue
@@ -47,7 +48,7 @@ class App extends React.Component {
 					app.setState({selectedIssues:old})
 				}
 			}
-			issueElems.push(<li className="checkbox issue" id={issue.id} onClick={changeFunc}>{issue.issueName}</li>)
+			issueElems.push(<li className="checkbox issue" id={issue.id} onClick={changeFunc} key={issue.id}>{issue.issueName}</li>)
 		})
 
 		let candidateElems = []
@@ -75,7 +76,7 @@ class App extends React.Component {
 					app.setState({selectedCandidates:old})
 				}
 			}
-			candidateElems.push(<li className="checkbox candidate" id={candidate.id} onClick={changeFunc}>{candidate.name}</li>)
+			candidateElems.push(<li className="checkbox candidate" id={candidate.id} onClick={changeFunc} key={candidate.id}>{candidate.name}</li>)
 		})
 
 		return <div id="app"><div id="header"><h1 id="title">glas4</h1><div className="relative"><ul className="toggles">{issueElems}</ul></div><div className="relative"><ul className="toggles">{candidateElems}</ul></div></div><Videos app={this} ref="videos" /></div>

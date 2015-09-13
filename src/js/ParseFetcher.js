@@ -58,9 +58,6 @@ let ParseFetcher = {
 						}
 					}
 					arrIssues.push(issue);
-				};	
-				for (var i = arrIssues.length - 1; i >= 0; i--) {
-					console.log("ISSUES NAMES", arrIssues[i])
 				};
 				resolve(arrIssues)
 			}, function(error) { 
@@ -76,7 +73,7 @@ let ParseFetcher = {
 		// limit: int, only return limit # of elements
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
-				let videos = [{"id": "e", "issue_id":"c", "candidate_id":"a", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "f", "issue_id":"c", "candidate_id":"b", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "g", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "h", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "i", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "j", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "k", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "l", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "m", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "n", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "o", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "p", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}]
+				let videos = [{"id": "e", "issue_id":"fD5Laqp0kL", "candidate_id":"7niWZ0zF0i", "score": 0.82, "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "f", "issue_id":"c", "candidate_id":"b", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "g", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "h", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "i", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "j", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "k", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "l", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "m", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "n", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "o", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "p", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}]
 				let retVideos = _.filter(videos, (video) => {
 					if (issueIDs.length > 0) {
 						let foundIssue = false
@@ -104,7 +101,7 @@ let ParseFetcher = {
 				})
 				let result = retVideos.slice(offset, offset + limit)
 				resolve(result)
-			}, 5000)
+			}, 100)
 		})
 	}
 }

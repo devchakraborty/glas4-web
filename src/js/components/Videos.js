@@ -24,17 +24,16 @@ class Videos extends React.Component {
 		this.load(0, DEFAULT_LIMIT)
 	}
 	render() {
-		console.log('VIDEOS RENDER')
 		let videoElems = []
 		if (this.state.loading) {
-			videoElems.push(<li className="loading">Loading...</li>)
+			videoElems.push(<li className="loading" key="loading">Loading...</li>)
 		} else {
 			for (let video of this.state.videos) {
 				videoElems.push(<Video {...video} key={video.id} />)
 			}
 			let prev = this.prev.bind(this)
 			let next = this.next.bind(this)
-			videoElems.push(<li id="nav"><a href="#" onClick={prev} id="prev" className={this.state.page == 0 ? "hidden" : ""}>&lt;</a> <a href="#" onClick={next} id="next" className={this.state.page == this.state.num_pages - 1 ? "hidden" : ""}>&gt;</a></li>)
+			videoElems.push(<li id="nav" key="nav"><a href="#" onClick={prev} id="prev" className={this.state.page == 0 ? "hidden" : ""}>&lt;</a> <a href="#" onClick={next} id="next" className={this.state.page == this.state.num_pages - 1 ? "hidden" : ""}>&gt;</a></li>)
 		}
 		return <div id="videos">{videoElems}</div>
 	}
