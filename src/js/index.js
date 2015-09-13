@@ -41,7 +41,7 @@ class App extends React.Component {
 			issues.push(this.state.issues[id])
 		}
 		issues = issues.sort(function(a, b) {
-			return a.name > b.name ? 1 : -1
+			return a.issueName > b.issueName ? 1 : -1
 		})
 		
 		issues.forEach((issue) => {
@@ -58,7 +58,7 @@ class App extends React.Component {
 					app.setState({selectedIssues:old})
 				}
 			}
-			issueElems.push(<li className="checkbox" id={issue.id} onClick={changeFunc}>{issue.name}</li>)
+			issueElems.push(<li className="checkbox" id={issue.id} onClick={changeFunc}>{issue.issueName}</li>)
 		})
 
 		let candidateElems = []
