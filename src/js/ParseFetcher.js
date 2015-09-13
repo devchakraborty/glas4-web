@@ -72,28 +72,40 @@ let ParseFetcher = {
 		// offset: int, skip the first offset # of elements
 		// limit: int, only return limit # of elements
 		return new Promise((resolve, reject) => {
+			console.log("START PROMISE")
 
 			var videoQuery = new Parse.Query('Videos');
 			if (typeof issueIDs != "undefined" && issueIDs != null && issueIDs.length > 0) { // checks if issueIDs is populated
-				videoQuery = videoQuery.containedIn("issuesID", issueIDs).find().then(function(results) {
+				console.log("THROUGH CONDITIONAL")
+				videoQuery = videoQuery.containedIn("issuesID", issueIDs)
+			}
+			videoQuery.find().then(function(results) {
+
+					console.log("MIDDLE SOMEWHERE")
 					console.log("resultsLength", results.length)
 					var arrVideos = [];
-					var arrKeys = ["videoID", "confidence", "startTime", "endTime", "objectId"];
+					var arrKeys = ["videoID", "confidence", "startTime", "endTime", "objectId", "candidatesID", "issuesID"];
 					for (var j = results.length - 1; j >= 0; j--) { 
 						var video = {}
-						for (var i = 0; i < 2; i++) {
+						for (var i = 0; i < arrKeys.length; i++) {
 							switch(arrKeys[i]) { 
 								case "videoID": 
 								video["videoID"] = results[j].get("videoID");
 								break;
 								case "confidence": 
-								video["confidence"] = results[j].get("confidence");
+								video["score"] = results[j].get("confidence");
 								break;
 								case "startTime": 
 								video["startTime"] = results[j].get("startTime");
 								break;
 								case "endTime": 
 								video["endTime"] = results[j].get("endTime");
+								case "candidatesID":
+								video["candidate_id"] = results[j].get("candidatesID")
+								break
+								case "issuesID":
+								video["issue_id"] = results[j].get("issuesID")
+								break
 								break;
 								case "objectId": 
 								video["id"] = results[j].id;
@@ -106,6 +118,7 @@ let ParseFetcher = {
 							console.log("arrVideos", arrVideos[i])
 						};
 					};
+					console.log("OVER HERE")
 					resolve(arrVideos)
 				}, function(error) { 
 					reject(error)
@@ -114,7 +127,6 @@ let ParseFetcher = {
 
 				// console.log("issueIDs", issueIDs)
 				// console.log("videoQuery", videoQuery.get("videoID"))
-			};
 
 		})
 	}

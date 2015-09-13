@@ -23,6 +23,9 @@ class App extends React.Component {
 		}
 		CandidateStore.on(StoreConstants.CANDIDATE_CREATE, _.debounce(candidateUpdate, 50))
 	}
+	componentDidUpdate() {
+		this.refs.videos.loadPage(0)
+	}
 	render() {
 		let issueElems = []
 		let issues = []
