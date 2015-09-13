@@ -63,8 +63,8 @@ class App extends React.Component {
 		let candidateElems = []
 		let candidates = []
 
-		for (let id in this.state.candidates) {
-			candidates.push(this.state.candidates[id])
+		for (let objectId in this.state.candidates) {
+			candidates.push(this.state.candidates[objectId])
 		}
 
 		candidates = candidates.sort(function(a, b) {
@@ -78,10 +78,10 @@ class App extends React.Component {
 				let checked = $('#'+candidate.id).hasClass('active')
 				let old = _.clone(app.state.selectedCandidates)
 				if (checked) {
-					old[candidate.id] = candidate
+					old[candidate.objectId] = candidate
 					app.setState({selectedCandidates:old})
 				} else {
-					delete old[candidate.id]
+					delete old[candidate.objectId]
 					app.setState({selectedCandidates:old})
 				}
 			}
@@ -190,7 +190,9 @@ class CandidateTag extends React.Component {
 function init() {
 	React.render(<App />, document.body)
 	Promise.all([ParseFetcher.getAllCandidates(), ParseFetcher.getAllIssues()]).then(function(results) {
-		let candidates = results[0], issues = results[1], videos = results[2]
+		let candidates = results[0], issues = results[1], videos = results[2];
+		console.log(candidates);
+		console.log("SHARON WAS HERE")
 		for (let issue of issues) {
 			Dispatcher.dispatch({type: StoreConstants.ISSUE_CREATE, issue:issue})
 		}
