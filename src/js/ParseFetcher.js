@@ -39,12 +39,34 @@ let ParseFetcher = {
 	getAllIssues: () => {
 		// Get candidates from Parse
 		return new Promise((resolve, reject) => {
-			var query = new Parse.Query('')
+			var query = new Parse.Query('Issues');
+			query.limit = 10; 
 
-			setTimeout(() => {
-				let issues = [{id:"c", "name": "Climate Change"}, {"id":"d", "name": "Economy"}]
-				resolve(issues)
-			}, 200)
+			query.find().then(function(results) {
+				var arrIssues = [];
+				var arrKeys = ["issueName", "objectId"]; 
+				for (var j = results.length - 1; j >= 0; j--) {
+					var issue = {}
+					for (var i = 0; i < 2; i++) {
+						switch(arrKeys[i]) { 
+							case "issueName": 
+								issue["issueName"] = results[j].get("issueName");
+								break;
+							case "objectId": 
+								issue["id"] = results[j].id;
+								break;
+						}
+					}
+					arrIssues.push(issue);
+				};	
+				for (var i = arrIssues.length - 1; i >= 0; i--) {
+					console.log("ISSUES NAMES", arrIssues[i])
+				};
+				resolve(arrIssues)
+			}, function(error) { 
+				reject(error)
+			}); 	
+
 		})
 	},
 	getVideos: (issueIDs, candidateIDs, offset, limit) => {
