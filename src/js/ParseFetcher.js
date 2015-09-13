@@ -12,8 +12,8 @@ let ParseFetcher = {
 				var arrKeys = ["first_name", "last_name", "party", "objectId"]; 
 				for (var j = results.length - 1; j >= 0; j--) {
 					console.log("inside for loop")
+					var candidate = {}
 					for (var i = 0; i < 4; i++) {
-						var candidate = {}; 
 						switch(arrKeys[i]) { 
 							case "first_name": 
 								candidate["first_name"] = results[j].get("first_name");

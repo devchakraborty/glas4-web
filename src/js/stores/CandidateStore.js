@@ -36,4 +36,6 @@ let CandidateStore = assign({}, EventEmitter.prototype, {
 	})
 })
 
+CandidateStore.setMaxListeners(1000)
+
 module.exports = CandidateStore

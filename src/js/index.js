@@ -190,7 +190,7 @@ class CandidateTag extends React.Component {
 function init() {
 	React.render(<App />, document.body)
 	Promise.all([ParseFetcher.getAllCandidates(), ParseFetcher.getAllIssues()]).then(function(results) {
-		let candidates = results[0], issues = results[1], videos = results[2];
+		let candidates = results[0], issues = results[1]
 		console.log(candidates);
 		console.log("SHARON WAS HERE")
 		for (let issue of issues) {
