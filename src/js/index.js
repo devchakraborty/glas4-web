@@ -60,7 +60,7 @@ class App extends React.Component {
 					app.setState({selectedIssues:old})
 				}
 			}
-			issueElems.push(<li className="checkbox" id={issue.id} onClick={changeFunc}>{issue.issueName}</li>)
+			issueElems.push(<li className="checkbox issue" id={issue.id} onClick={changeFunc}>{issue.issueName}</li>)
 		})
 
 		let candidateElems = []
@@ -88,7 +88,7 @@ class App extends React.Component {
 					app.setState({selectedCandidates:old})
 				}
 			}
-			candidateElems.push(<li className="checkbox" id={candidate.id} onClick={changeFunc}>{candidate.name}</li>)
+			candidateElems.push(<li className="checkbox candidate" id={candidate.id} onClick={changeFunc}>{candidate.name}</li>)
 		})
 
 		return <div id="app"><div id="header"><h1 id="title">glas4</h1><div className="relative"><ul className="toggles">{issueElems}</ul></div><div className="relative"><ul className="toggles">{candidateElems}</ul></div></div><Videos app={this} ref="videos" /></div>
