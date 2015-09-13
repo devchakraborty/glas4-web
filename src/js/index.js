@@ -1,4 +1,5 @@
 require('../scss/index.scss')
+require('file?name=favicon.ico!../favicon.ico')
 
 import React from 'react'
 import ParseFetcher from './ParseFetcher'
@@ -129,9 +130,11 @@ class Videos extends React.Component {
 	}
 	next() {
 		this.loadPage(PAGE + 1)
+		return false
 	}
 	prev() {
 		this.loadPage(PAGE - 1)
+		return false
 	}
 	loadPage(page) {
 		this._scrollTop(() => {
