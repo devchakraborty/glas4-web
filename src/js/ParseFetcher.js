@@ -67,13 +67,6 @@ let ParseFetcher = {
 		})
 	},
 	getVideos: (issueIDs, candidateIDs, offset, limit) => {
-
-
-		console.log("GET VIDEOS REQUESTS", issueIDs.map((issue) => {
-			return require('./stores/IssueStore').get(issue).issueName
-		}), candidateIDs.map((candidate) => {
-			return require('./stores/CandidateStore').get(candidate).last_name
-		}))
 		// issueID: array, issue ids to filter videos by, don't filter if empty array
 		// candidateIDs: array, candidate ids to filter videos by, don't filter if empty array
 		// offset: int, skip the first offset # of elements
@@ -115,6 +108,7 @@ let ParseFetcher = {
 			}))
 
 			return Promise.all(promises).then((results) => {
+				
 				let count = results[0], records = results[1].map((record) => {
 					let recordObj = {}
 					let attributeMap = {
@@ -123,14 +117,16 @@ let ParseFetcher = {
 						"startTime": "startTime",
 						"endTime": "endTime",
 						"candidatesID": "candidate_id",
-						"issuesID": "issue_id"
+						"issuesID": "issue_id",
+						"id": "id"
 					}
 					for (let key in attributeMap) {
-						if (key == 'objectId')
+						if (key == 'id')
 							recordObj.id = record.id
 						else
 							recordObj[attributeMap[key]] = record.get(key)
 					}
+					
 					return recordObj
 				})
 				resolve({

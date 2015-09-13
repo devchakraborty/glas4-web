@@ -6,6 +6,7 @@ let IssueStore = require('../stores/IssueStore')
 let CandidateStore = require('../stores/CandidateStore')
 
 let Videos = require('./Videos')
+let Tutorial = require('./Tutorial')
 
 class App extends React.Component {
 	constructor() {
@@ -24,7 +25,7 @@ class App extends React.Component {
 		CandidateStore.on(StoreConstants.CANDIDATE_CREATE, _.debounce(candidateUpdate.bind(this), 50))
 	}
 	componentDidUpdate(prevProps, prevState) {
-		console.log(prevState, ">", this.state)
+		
 		let shouldReload = 
 		Object.keys(this.state.selectedIssues).length != Object.keys(prevState.selectedIssues).length
 		|| 
@@ -53,7 +54,7 @@ class App extends React.Component {
 		issues.forEach((issue) => {
 			let app = this
 			let changeFunc = () => {
-				console.log("CLICK!!!")
+				
 				let checked = !$('#'+issue.id).hasClass('active')
 				$(".checkbox.issue").removeClass("active")
 				if (checked) {
@@ -82,7 +83,7 @@ class App extends React.Component {
 		candidates.forEach((candidate) => {
 			let app = this
 			let changeFunc = () => {
-				console.log(CandidateStore.get(candidate.id).last_name)
+				
 				$("#"+candidate.id).toggleClass("active")
 				let checked = $('#'+candidate.id).hasClass('active')
 				let old = _.clone(app.state.selectedCandidates)
@@ -97,7 +98,7 @@ class App extends React.Component {
 			candidateElems.push(<li className="checkbox candidate" id={candidate.id} onClick={changeFunc} key={candidate.id}>{candidate.name}</li>)
 		})
 
-		return <div id="app"><div id="header"><h1 id="title">glas4</h1><div className="relative"><ul className="toggles">{issueElems}</ul></div><div className="relative"><ul className="toggles">{candidateElems}</ul></div></div><Videos app={this} ref="videos" /></div>
+		return <div id="app"><div id="header"><h1 id="title">glas4</h1><div className="relative"><ul className="toggles">{issueElems}</ul></div><div className="relative"><ul className="toggles">{candidateElems}</ul></div></div><Videos app={this} ref="videos" /><Tutorial /></div>
 	}
 }
 

@@ -44,13 +44,13 @@ class Videos extends React.Component {
 			Dispatcher.dispatch({type:StoreConstants.VIDEOS_SYNC, videos:result.videos})
 		})
 	}
-	next() {
+	next(e) {
 		this.loadPage(this.state.page + 1)
-		return false
+		e.preventDefault()
 	}
-	prev() {
+	prev(e) {
 		this.loadPage(this.state.page - 1)
-		return false
+		e.preventDefault()
 	}
 	loadPage(page) {
 		this.load((page) * DEFAULT_LIMIT, DEFAULT_LIMIT)
