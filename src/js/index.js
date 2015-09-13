@@ -11,7 +11,9 @@ let VideoStore = require('./stores/VideoStore')
 let StoreConstants = require('./stores/StoreConstants')
 let URL = require('url-parse')
 
-const DEFAULT_LIMIT = 100
+const DEFAULT_LIMIT = 10
+
+let PAGE = 0
 
 class App extends React.Component {
 	constructor() {
@@ -24,7 +26,6 @@ class App extends React.Component {
 		})
 		CandidateStore.on(StoreConstants.CANDIDATE_CREATE, () => {
 			this.setState({candidates: CandidateStore.getAll()})
-			console.log("CANDIDATES UPDATE", this.state.candidates)
 		})
 	}
 	componentDidUpdate() {
@@ -47,7 +48,6 @@ class App extends React.Component {
 			let changeFunc = () => {
 				$("#"+issue.id).toggleClass("active");
 				let checked = $('#'+issue.id).hasClass('active');
-				console.log(checked)
 				let old = _.clone(app.state.selectedIssues)
 				if (checked) {
 					old[issue.id] = issue
@@ -100,7 +100,6 @@ class Videos extends React.Component {
 	}
 	componentDidMount() {
 		VideoStore.on(StoreConstants.VIDEOS_SYNC, () => {
-			console.log("VIDEOS JUST SYNCED", VideoStore.getAll())
 			this.setState({videos: VideoStore.getAll(), loading:false})
 		})
 		this.load(0, DEFAULT_LIMIT)
@@ -112,19 +111,26 @@ class Videos extends React.Component {
 		}
 		if (this.state.loading) {
 			videoElems.push(<li class="loading">Loading...</li>)
-		}/* else if (this.state.noMore) {
-			videoElems.push(<li class="nomore">No more items.</li>)
 		} else {
-			videoElems.push(<li class="viewmore" onClick={this.viewMore}>View more</li>)
-		}*/
+			let prev = this.prev.bind(this)
+			let next = this.next.bind(this)
+			videoElems.push(<li id="nav"><a href="#" onClick={prev} id="prev">&lt;</a> <a href="#" onClick={next} id="next">&gt;</a></li>)
+		}
 		return <div id="videos">{videoElems}</div>
 	}
 	load(offset, limit) {
 		this.setState({loading:true})
-		// console.log("ISSUES", this.props.app.state.issues)
 		ParseFetcher.getVideos(_.pluck(_.values(this.props.app.state.selectedIssues), 'id'), _.pluck(_.values(this.props.app.state.selectedCandidates), 'id'), offset, limit).then((videos) => {
-			Dispatcher.dispatch({type:StoreConstants.VIDEOS_SYNC, videos:videos, offset:offset})
+			Dispatcher.dispatch({type:StoreConstants.VIDEOS_SYNC, videos:videos})
 		})
+	}
+	next() {
+		this.load((++PAGE) * DEFAULT_LIMIT, DEFAULT_LIMIT)
+		console.log("PAGE", PAGE)
+	}
+	prev() {
+		this.load((--PAGE) * DEFAULT_LIMIT, DEFAULT_LIMIT)
+		console.log("PAGE", PAGE)
 	}
 }
 
@@ -134,7 +140,6 @@ class Video extends React.Component {
 		this.state = {}
 	}
 	render() {
-		// console.log("VIDEO URL", this.props.video_url)
 		let url = new URL(this.props.video_url, true)
 		let videoID = url.query.v
 		let start = url.query.start
@@ -144,7 +149,7 @@ class Video extends React.Component {
 		embedUrl.set('protocol', 'https:')
 		embedUrl.set('hostname', 'www.youtube.com')
 		embedUrl.set('pathname', '/embed/'+videoID)
-		let embedQuery = {}
+		let embedQuery = {autoplay:1}
 		if (start != null) {
 			embedQuery.start = start
 		}
@@ -153,8 +158,12 @@ class Video extends React.Component {
 		}
 		embedUrl.set('query', embedQuery)
 
+		let replaceImage = () => {
+			$("#img-"+videoID).replaceWith("<iframe src='" + embedUrl + "' class='youtube'></iframe>")
+		}
+
 		return (<li className="video">
-			<iframe src={embedUrl.href} className="youtube"></iframe>
+			<img id={"img-"+videoID} className="video-thumb" src={require('../img/play.png')} style={{backgroundImage: "url('//i.ytimg.com/vi/"+videoID+"/hqdefault.jpg');"}} onClick={replaceImage} />
 			<CandidateTag candidateID={this.props.candidate_id} />
 		</li>)
 	}

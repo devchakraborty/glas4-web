@@ -83,15 +83,50 @@ ul.toggles {
 }
 
 .video {
-	width: $column-width;
-	height: $video-height;
+	width: $column-width - 2 * $video-padding;
+	height: $video-height - 2 * $video-padding;
 	background: #f4f4f4;
 	display: block;
 	margin-bottom: $gap-below-video;
 	padding: $video-padding;
 }
 
-iframe.youtube {
-	width: $column-width - $video-padding;
-	height: $video-height - $video-padding;
+.video-thumb {
+	cursor: pointer;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+}
+
+.video-thumb, iframe.youtube {
+	width: $column-width - 2 * $video-padding;
+	height: $video-height - 2 * $video-padding;
+}
+
+ul, li {
+	list-style: none;
+}
+
+#prev, #next {
+	width: 21px;
+	height: 33px;
+
+	text-indent: -9999px;
+	display: block;
+}
+
+#prev {
+	background:url('../img/prev.png') center center no-repeat;
+	float: left;
+}
+
+#next {
+	background:url('../img/next.png') center center no-repeat;
+	float: right;
+}
+
+#nav {
+	height: 33px;
+	clear: both;
+	margin-bottom: 50px;
 }

@@ -5,14 +5,9 @@ let assign = require('object-assign')
 let StoreConstants = require('./StoreConstants')
 let Dispatcher = require('../AppDispatcher')
 
-function create(videos, offset) {
-	if (_videos.length > videos.length + offset) {
-		_videos = _videos.slice(0, videos.length + offset)
-	}
-	for (let i = 0; i < videos.length; i++) {
-		let video = videos[i]
-		_videos[i + offset] = video
-	}
+function create(videos) {
+	if (videos.length > 0)
+		_videos = videos
 }
 
 let VideoStore = assign({}, EventEmitter.prototype, {
@@ -20,10 +15,9 @@ let VideoStore = assign({}, EventEmitter.prototype, {
 		return _videos
 	},
 	dispatcherIndex: Dispatcher.register((action) => {
-			console.log("ACTION", action)
 		switch (action.type) {
 			case StoreConstants.VIDEOS_SYNC:
-				create(action.videos, action.offset)
+				create(action.videos)
 				VideoStore.emit(StoreConstants.VIDEOS_SYNC)
 				break
 		}

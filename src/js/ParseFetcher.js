@@ -8,16 +8,17 @@ let ParseFetcher = {
 			query.limit = 10; 
 
 			query.find().then(function(results) { 
+				console.log("RESULTS", results)
 				resolve(results.map((result) => {
 					return {
-						id: result.get('id'),
+						id: result.id,
 						first_name: result.get('first_name'),
 						last_name: result.get('last_name')
 					}
 				}))
 			}, function(error) {
 				reject(error)
-			}); 
+			});
 		})
 	},
 	getAllIssues: () => {
@@ -39,7 +40,6 @@ let ParseFetcher = {
 			setTimeout(() => {
 				let videos = [{"id": "e", "issue_id":"c", "candidate_id":"a", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "f", "issue_id":"c", "candidate_id":"b", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "g", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "h", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "i", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "j", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "k", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "l", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "m", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "n", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "o", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "p", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}]
 				let retVideos = _.filter(videos, (video) => {
-					console.log('filter')
 					if (issueIDs.length > 0) {
 						let foundIssue = false
 						for (let issueID of issueIDs) {
@@ -48,11 +48,9 @@ let ParseFetcher = {
 								break
 							}
 						}
-						console.log("FOUND ISSUE", foundIssue, video.issue_id)
 						if (!foundIssue)
 							return false
 					}
-					console.log('here', issueIDs.length)
 					if (candidateIDs.length > 0) {
 						let foundCandidate = false
 						for (let candidateID of candidateIDs) {
@@ -66,8 +64,9 @@ let ParseFetcher = {
 					}
 					return true
 				})
-				console.log("VIDEOS", retVideos)
-				resolve(retVideos.slice(offset, limit))
+				console.log("RET VIDEOS", retVideos, offset, offset + limit)
+				let result = retVideos.slice(offset, offset + limit)
+				resolve(result)
 			}, 200)
 		})
 	}
