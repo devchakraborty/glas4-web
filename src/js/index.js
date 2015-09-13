@@ -110,12 +110,12 @@ class Videos extends React.Component {
 	render() {
 		console.log('VIDEOS RENDER')
 		let videoElems = []
-		for (let video of this.state.videos) {
-			videoElems.push(<Video {...video} key={video.id} />)
-		}
 		if (this.state.loading) {
 			videoElems.push(<li className="loading">Loading...</li>)
 		} else {
+			for (let video of this.state.videos) {
+				videoElems.push(<Video {...video} key={video.id} />)
+			}
 			let prev = this.prev.bind(this)
 			let next = this.next.bind(this)
 			videoElems.push(<li id="nav"><a href="#" onClick={prev} id="prev" className={this.state.page == 0 ? "hidden" : ""}>&lt;</a> <a href="#" onClick={next} id="next" className={this.state.page == this.state.num_pages - 1 ? "hidden" : ""}>&gt;</a></li>)
@@ -128,9 +128,6 @@ class Videos extends React.Component {
 			Dispatcher.dispatch({type:StoreConstants.VIDEOS_SYNC, videos:videos})
 		})
 	}
-	_scrollTop(callback) {
-		$("html, body").animate({scrollTop:0}, 400, callback)
-	}
 	next() {
 		this.loadPage(this.state.page + 1)
 		return false
@@ -140,10 +137,8 @@ class Videos extends React.Component {
 		return false
 	}
 	loadPage(page) {
-		this._scrollTop(() => {
-			this.load((page) * DEFAULT_LIMIT, DEFAULT_LIMIT)
-			this.setState({page:page})
-		})
+		this.load((page) * DEFAULT_LIMIT, DEFAULT_LIMIT)
+		this.setState({page:page})
 	}
 }
 

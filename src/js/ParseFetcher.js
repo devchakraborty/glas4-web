@@ -104,7 +104,7 @@ let ParseFetcher = {
 				})
 				let result = retVideos.slice(offset, offset + limit)
 				resolve(result)
-			}, 200)
+			}, 5000)
 		})
 	}
 }
