@@ -30,7 +30,7 @@ class App extends React.Component {
 	}
 	componentDidUpdate() {
 		this.refs.videos.setState({videos:[]})
-		this.refs.videos.load(0, DEFAULT_LIMIT)
+		this.refs.videos.loadPage(0)
 	}
 	render() {
 		let issueElems = []
@@ -124,13 +124,19 @@ class Videos extends React.Component {
 			Dispatcher.dispatch({type:StoreConstants.VIDEOS_SYNC, videos:videos})
 		})
 	}
+	_scrollTop(callback) {
+		$("html, body").animate({scrollTop:0}, 400, callback)
+	}
 	next() {
-		this.load((++PAGE) * DEFAULT_LIMIT, DEFAULT_LIMIT)
-		console.log("PAGE", PAGE)
+		this.loadPage(PAGE + 1)
 	}
 	prev() {
-		this.load((--PAGE) * DEFAULT_LIMIT, DEFAULT_LIMIT)
-		console.log("PAGE", PAGE)
+		this.loadPage(PAGE - 1)
+	}
+	loadPage(page) {
+		this._scrollTop(() => {
+			this.load((PAGE = page) * DEFAULT_LIMIT, DEFAULT_LIMIT)
+		})
 	}
 }
 
