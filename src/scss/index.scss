@@ -42,7 +42,7 @@ ul.toggles {
 	width: 100%;
 	display: block;
 	clear: both;
-	height: $toggle-bar-height;
+	// height: $toggle-bar-height;
 
 	text-align: center;
 
@@ -132,4 +132,15 @@ ul, li {
 	height: 33px;
 	clear: both;
 	margin-bottom: 50px;
+}
+
+.loader {
+	text-indent: -9999px;
+	width: 100%;
+	height: 30px;
+	background:url('../img/loader.gif') center center no-repeat;
+}
+
+.hidden, #prev.hidden, #next.hidden {
+	display: none;
 }
