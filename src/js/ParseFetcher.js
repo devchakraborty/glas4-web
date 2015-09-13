@@ -67,66 +67,77 @@ let ParseFetcher = {
 		})
 	},
 	getVideos: (issueIDs, candidateIDs, offset, limit) => {
+
+
+		console.log("GET VIDEOS REQUESTS", issueIDs.map((issue) => {
+			return require('./stores/IssueStore').get(issue).issueName
+		}), candidateIDs.map((candidate) => {
+			return require('./stores/CandidateStore').get(candidate).last_name
+		}))
 		// issueID: array, issue ids to filter videos by, don't filter if empty array
 		// candidateIDs: array, candidate ids to filter videos by, don't filter if empty array
 		// offset: int, skip the first offset # of elements
 		// limit: int, only return limit # of elements
 		return new Promise((resolve, reject) => {
-			console.log("START PROMISE")
+			
 
-			var videoQuery = new Parse.Query('Videos');
+			var promises = [];
+
+			var countQuery = new Parse.Query('Videos');
 			if (typeof issueIDs != "undefined" && issueIDs != null && issueIDs.length > 0) { // checks if issueIDs is populated
-				console.log("THROUGH CONDITIONAL")
-				videoQuery = videoQuery.containedIn("issuesID", issueIDs)
+				
+				countQuery = countQuery.containedIn("issuesID", issueIDs)
 			}
-			videoQuery.find().then(function(results) {
+			if (typeof candidateIDs != "undefined" && candidateIDs != null && candidateIDs.length > 0) { // checks if candidateIDs is populated
+				
+				countQuery = countQuery.containedIn("candidatesID", candidateIDs)
+			}
+			promises.push(countQuery.count().then(function(a) {
+				
+				return a
+			}))
 
-					console.log("MIDDLE SOMEWHERE")
-					console.log("resultsLength", results.length)
-					var arrVideos = [];
-					var arrKeys = ["videoID", "confidence", "startTime", "endTime", "objectId", "candidatesID", "issuesID"];
-					for (var j = results.length - 1; j >= 0; j--) { 
-						var video = {}
-						for (var i = 0; i < arrKeys.length; i++) {
-							switch(arrKeys[i]) { 
-								case "videoID": 
-								video["videoID"] = results[j].get("videoID");
-								break;
-								case "confidence": 
-								video["score"] = results[j].get("confidence");
-								break;
-								case "startTime": 
-								video["startTime"] = results[j].get("startTime");
-								break;
-								case "endTime": 
-								video["endTime"] = results[j].get("endTime");
-								case "candidatesID":
-								video["candidate_id"] = results[j].get("candidatesID")
-								break
-								case "issuesID":
-								video["issue_id"] = results[j].get("issuesID")
-								break
-								break;
-								case "objectId": 
-								video["id"] = results[j].id;
-								break;
-							}
-						}
-						arrVideos.push(video);
-						console.log("arrVideosLength", arrVideos.length)
-						for (var i = arrVideos.length - 1; i >= 0; i--) {
-							console.log("arrVideos", arrVideos[i])
-						};
-					};
-					console.log("OVER HERE")
-					resolve(arrVideos)
-				}, function(error) { 
-					reject(error)
-				}); 	
-				// console.log("videoQuery", videoQuery.get("videoID"))
+			let recordQuery = new Parse.Query('Videos')
+			if (typeof issueIDs != "undefined" && issueIDs != null && issueIDs.length > 0) { // checks if issueIDs is populated
+				
+				recordQuery = recordQuery.containedIn("issuesID", issueIDs)
+			}
+			if (typeof candidateIDs != "undefined" && candidateIDs != null && candidateIDs.length > 0) { // checks if candidateIDs is populated
+				
+				recordQuery = recordQuery.containedIn("candidatesID", candidateIDs)
+			}
+			recordQuery.skip(offset)
+			recordQuery.limit(limit)
 
-				// console.log("issueIDs", issueIDs)
-				// console.log("videoQuery", videoQuery.get("videoID"))
+			promises.push(recordQuery.find().then(function(a) {
+				
+				return a
+			}))
+
+			return Promise.all(promises).then((results) => {
+				let count = results[0], records = results[1].map((record) => {
+					let recordObj = {}
+					let attributeMap = {
+						"videoID": "videoID",
+						"confidence": "score",
+						"startTime": "startTime",
+						"endTime": "endTime",
+						"candidatesID": "candidate_id",
+						"issuesID": "issue_id"
+					}
+					for (let key in attributeMap) {
+						if (key == 'objectId')
+							recordObj.id = record.id
+						else
+							recordObj[attributeMap[key]] = record.get(key)
+					}
+					return recordObj
+				})
+				resolve({
+					count: count,
+					videos: records
+				})
+			})
 
 		})
 	}

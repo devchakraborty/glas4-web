@@ -16,7 +16,7 @@ class IssueTag extends React.Component {
 	}
 	render() {
 		if (this.state.issueName) {
-			console.log("ISSUE VIDEO", this.props.video.props)
+			
 			let level = "orange"
 			if (this.props.video.props.score >= 0.6) {
 				level = "yellow"

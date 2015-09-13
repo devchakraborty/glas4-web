@@ -13,7 +13,7 @@ class App extends React.Component {
 		this.state = {issues:{}, candidates:{}, selectedIssues:{}, selectedCandidates:{}}
 	}
 	componentDidMount() {
-		console.log('mount')
+		
 		let issueUpdate = () => {
 			this.setState({issues: IssueStore.getAll()})
 		}
@@ -23,8 +23,21 @@ class App extends React.Component {
 		}
 		CandidateStore.on(StoreConstants.CANDIDATE_CREATE, _.debounce(candidateUpdate.bind(this), 50))
 	}
-	componentDidUpdate() {
-		this.refs.videos.loadPage(0)
+	componentDidUpdate(prevProps, prevState) {
+		console.log(prevState, ">", this.state)
+		let shouldReload = 
+		Object.keys(this.state.selectedIssues).length != Object.keys(prevState.selectedIssues).length
+		|| 
+		(
+			Object.keys(this.state.selectedIssues).length * Object.keys(prevState.selectedIssues).length > 0
+			&&
+			Object.keys(this.state.selectedIssues)[0] != Object.keys(prevState.selectedIssues)[0]
+		)
+		||
+		Object.keys(this.state.selectedCandidates).length != Object.keys(prevState.selectedCandidates).length
+		;
+		if (shouldReload)
+			this.refs.videos.loadPage(0)
 	}
 	render() {
 		let issueElems = []
@@ -40,13 +53,16 @@ class App extends React.Component {
 		issues.forEach((issue) => {
 			let app = this
 			let changeFunc = () => {
+				console.log("CLICK!!!")
 				let checked = !$('#'+issue.id).hasClass('active')
 				$(".checkbox.issue").removeClass("active")
 				if (checked) {
 					$('#'+issue.id).addClass('active')
-					app.setState({selectedIssues:[issue]})
+					let newIssue = {}
+					newIssue[issue.id] = issue
+					app.setState({selectedIssues:newIssue})
 				} else {
-					app.setState({selectedIssues:[]})
+					app.setState({selectedIssues:{}})
 				}
 			}
 			issueElems.push(<li className="checkbox issue" id={issue.id} onClick={changeFunc} key={issue.id}>{issue.issueName}</li>)
@@ -66,14 +82,15 @@ class App extends React.Component {
 		candidates.forEach((candidate) => {
 			let app = this
 			let changeFunc = () => {
+				console.log(CandidateStore.get(candidate.id).last_name)
 				$("#"+candidate.id).toggleClass("active")
 				let checked = $('#'+candidate.id).hasClass('active')
 				let old = _.clone(app.state.selectedCandidates)
 				if (checked) {
-					old[candidate.objectId] = candidate
+					old[candidate.id] = candidate
 					app.setState({selectedCandidates:old})
 				} else {
-					delete old[candidate.objectId]
+					delete old[candidate.id]
 					app.setState({selectedCandidates:old})
 				}
 			}

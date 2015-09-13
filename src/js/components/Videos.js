@@ -21,7 +21,7 @@ class Videos extends React.Component {
 		VideoStore.on(StoreConstants.VIDEOS_SYNC, () => {
 			this.setState({videos: VideoStore.getAll(), loading:false})
 		})
-		this.load(0, DEFAULT_LIMIT)
+		this.loadPage(0)
 	}
 	render() {
 		let videoElems = []
