@@ -72,36 +72,50 @@ let ParseFetcher = {
 		// offset: int, skip the first offset # of elements
 		// limit: int, only return limit # of elements
 		return new Promise((resolve, reject) => {
-			setTimeout(() => {
-				let videos = [{"id": "e", "issue_id":"fD5Laqp0kL", "candidate_id":"7niWZ0zF0i", "score": 0.82, "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "f", "issue_id":"c", "candidate_id":"b", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "g", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "h", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "i", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "j", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "k", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "l", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "m", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "n", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "o", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}, {"id": "p", "issue_id":"a", "candidate_id":"c", "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}]
-				let retVideos = _.filter(videos, (video) => {
-					if (issueIDs.length > 0) {
-						let foundIssue = false
-						for (let issueID of issueIDs) {
-							if (video.issue_id == issueID) {
-								foundIssue = true
-								break
+
+			var videoQuery = new Parse.Query('Videos');
+			if (typeof issueIDs != "undefined" && issueIDs != null && issueIDs.length > 0) { // checks if issueIDs is populated
+				videoQuery = videoQuery.containedIn("issuesID", issueIDs).find().then(function(results) {
+					console.log("resultsLength", results.length)
+					var arrVideos = [];
+					var arrKeys = ["videoID", "confidence", "startTime", "endTime", "objectId"];
+					for (var j = results.length - 1; j >= 0; j--) { 
+						var video = {}
+						for (var i = 0; i < 2; i++) {
+							switch(arrKeys[i]) { 
+								case "videoID": 
+								video["videoID"] = results[j].get("videoID");
+								break;
+								case "confidence": 
+								video["confidence"] = results[j].get("confidence");
+								break;
+								case "startTime": 
+								video["startTime"] = results[j].get("startTime");
+								break;
+								case "endTime": 
+								video["endTime"] = results[j].get("endTime");
+								break;
+								case "objectId": 
+								video["id"] = results[j].id;
+								break;
 							}
 						}
-						if (!foundIssue)
-							return false
-					}
-					if (candidateIDs.length > 0) {
-						let foundCandidate = false
-						for (let candidateID of candidateIDs) {
-							if (video.candidate_id == candidateID) {
-								foundCandidate = true
-								break
-							}
-						}
-						if (!foundCandidate)
-							return false
-					}
-					return true
-				})
-				let result = retVideos.slice(offset, offset + limit)
-				resolve(result)
-			}, 100)
+						arrVideos.push(video);
+						console.log("arrVideosLength", arrVideos.length)
+						for (var i = arrVideos.length - 1; i >= 0; i--) {
+							console.log("arrVideos", arrVideos[i])
+						};
+					};
+					resolve(arrVideos)
+				}, function(error) { 
+					reject(error)
+				}); 	
+				// console.log("videoQuery", videoQuery.get("videoID"))
+
+				// console.log("issueIDs", issueIDs)
+				// console.log("videoQuery", videoQuery.get("videoID"))
+			};
+
 		})
 	}
 }
