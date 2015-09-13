@@ -8,11 +8,35 @@ let ParseFetcher = {
 			query.limit = 10; 
 
 			query.find().then(function(results) { 
-				let candidates = results; 
-				console.log("CANDIDATES HERE", candidates)
-				// resolve(candidates)
-				// alert("got candidates");
-				resolve(results)
+				var arrCandidates = [];
+				var arrKeys = ["first_name", "last_name", "party", "objectId"]; 
+				for (var j = results.length - 1; j >= 0; j--) {
+					console.log("inside for loop")
+					for (var i = 0; i < 4; i++) {
+						var candidate = {}; 
+						switch(arrKeys[i]) { 
+							case "first_name": 
+								candidate["first_name"] = results[j].get("first_name");
+								console.log("inside switch: first_name", results[j].get("first_name"))
+								break;
+							case "last_name": 
+								candidate["last_name"] = results[j].get("last_name");
+								console.log("inside switch: last_name", results[j].get("last_name"))
+								break;
+							case "party": 
+								candidate["party"] = results[j].get("party");
+								console.log("inside switch: party", results[j].get("party"))
+								break;
+							case "objectId": 
+								candidate["id"] = results[j].id;
+								console.log("inside switch: id", results[j].id)
+								break;
+						}
+					}
+					console.log("CANDIDATE MAP", candidate);
+					arrCandidates.push(candidate);
+				};	
+				resolve(arrCandidates)
 			}, function(error) { 
 				reject(error)
 			}); 
@@ -21,6 +45,8 @@ let ParseFetcher = {
 	getAllIssues: () => {
 		// Get candidates from Parse
 		return new Promise((resolve, reject) => {
+			var query = new Parse.Query('')
+
 			setTimeout(() => {
 				let issues = [{id:"c", "name": "Climate Change"}, {"id":"d", "name": "Economy"}]
 				resolve(issues)

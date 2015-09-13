@@ -61,8 +61,8 @@ class App extends React.Component {
 		let candidateElems = []
 		let candidates = []
 
-		for (let id in this.state.candidates) {
-			candidates.push(this.state.candidates[id])
+		for (let objectId in this.state.candidates) {
+			candidates.push(this.state.candidates[objectId])
 		}
 
 		candidates = candidates.sort(function(a, b) {
@@ -72,17 +72,17 @@ class App extends React.Component {
 		candidates.forEach((candidate) => {
 			let app = this
 			let changeFunc = () => {
-				let checked = $('#'+candidate.id).is(':checked')
+				let checked = $('#'+candidate.objectId).is(':checked')
 				let old = _.clone(app.state.selectedCandidates)
 				if (checked) {
-					old[candidate.id] = candidate
+					old[candidate.objectId] = candidate
 					app.setState({selectedCandidates:old})
 				} else {
-					delete old[candidate.id]
+					delete old[candidate.objectId]
 					app.setState({selectedCandidates:old})
 				}
 			}
-			candidateElems.push(<li className="checkbox"><input type="checkbox" onChange={changeFunc} id={candidate.id} /> <label for={candidate.id}>{candidate.name}</label></li>)
+			candidateElems.push(<li className="checkbox"><input type="checkbox" onChange={changeFunc} id={candidate.id} /> <label for={candidate.objectId}>{candidate.name}</label></li>)
 		})
 
 		return <div id="app-wrapper"><div id="header"><h1 id="title">glas4</h1><ul>{issueElems}</ul><ul>{candidateElems}</ul></div><Videos app={this} ref="videos" /></div>
@@ -134,7 +134,9 @@ class Video extends React.Component {
 function init() {
 	React.render(<App />, $("#app").get(0))
 	Promise.all([ParseFetcher.getAllCandidates(), ParseFetcher.getAllIssues()]).then(function(results) {
-		let candidates = results[0], issues = results[1], videos = results[2]
+		let candidates = results[0], issues = results[1], videos = results[2];
+		console.log(candidates);
+		console.log("SHARON WAS HERE")
 		for (let issue of issues) {
 			Dispatcher.dispatch({type: StoreConstants.ISSUE_CREATE, issue:issue})
 		}
