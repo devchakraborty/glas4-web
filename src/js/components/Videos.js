@@ -31,6 +31,8 @@ class Videos extends React.Component {
 			for (let video of this.state.videos) {
 				videoElems.push(<Video {...video} key={video.id} />)
 			}
+			if (videoElems.length == 0)
+				videoElems.push(<li id="novideos" key="novideos">No items here yet!</li>)
 			let prev = this.prev.bind(this)
 			let next = this.next.bind(this)
 			videoElems.push(<li id="nav" key="nav"><a href="#" onClick={prev} id="prev" className={this.state.page == 0 ? "hidden" : ""}>&lt;</a> <a href="#" onClick={next} id="next" className={this.state.page < this.state.num_pages - 1 ? "" : "hidden"}>&gt;</a></li>)
