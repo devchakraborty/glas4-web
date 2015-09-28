@@ -126,6 +126,10 @@ let ParseFetcher = {
 						else
 							recordObj[attributeMap[key]] = record.get(key)
 					}
+
+					// Add 2s to start and end of video for Indico
+					recordObj.startTime = Math.max(0, recordObj.startTime - 2)
+					recordObj.endTime += 2
 					
 					return recordObj
 				})
